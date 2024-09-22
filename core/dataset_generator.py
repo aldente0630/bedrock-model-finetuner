@@ -40,8 +40,9 @@ from .logger import Loggable
 from .prompts import get_qa_generation_prompt
 from .utils import get_s3_uri, load_jsonl, measure_execution_time, save_jsonl
 
-MAX_TRAIN_RECORDS = 10000
-MAX_VALIDATION_RECORDS = 1000
+MAX_TRAINING_LINES = 10000
+MAX_VALIDATION_LINES = 1000
+DEFAULT_DATASETS_PREFIX = "datasets"
 DEFAULT_SYSTEM_PROMPT = """
 Below is an instruction that describes a task, paired with an input that provides further context. 
 Write a response that appropriately completes the request.
@@ -322,16 +323,16 @@ class QaDatasetGenerator(BaseQaDatasetGenerator, Loggable):
         Returns:
             List[Dict[str, Any]]: Sampled final results.
         """
-        max_records = (
-            MAX_TRAIN_RECORDS if dataset_type == "train" else MAX_VALIDATION_RECORDS
+        max_lines = (
+            MAX_TRAINING_LINES if dataset_type == "train" else MAX_VALIDATION_LINES
         )
-        if sample_final_results and len(formatted_results) > max_records:
+        if sample_final_results and len(formatted_results) > max_lines:
             self.logger.warning(
-                "Dataset size exceeds %d records. Randomly sampling %d records.",
-                max_records,
-                max_records,
+                "Dataset size exceeds %d lines. Randomly sampling %d lines.",
+                max_lines,
+                max_lines,
             )
-            return random.sample(formatted_results, max_records)
+            return random.sample(formatted_results, max_lines)
         return formatted_results
 
     @measure_execution_time
@@ -419,7 +420,7 @@ class QaDatasetGenerator(BaseQaDatasetGenerator, Loggable):
         dataset_path: str,
         boto_session: Optional[boto3.Session] = None,
         bucket_name: Optional[str] = None,
-        datasets_prefix: Optional[str] = None,
+        datasets_prefix: Optional[str] = DEFAULT_DATASETS_PREFIX,
     ) -> str:
         """
         Save the dataset locally and optionally upload to S3.

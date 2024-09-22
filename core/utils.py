@@ -18,6 +18,7 @@ import time
 from typing import Callable, Dict, List, Optional
 from langchain.base_language import BaseLanguageModel
 from langchain.callbacks.base import BaseCallbackHandler
+from langchain.schema import Document
 from langchain_aws import ChatBedrock
 from .constants import ChatModelId
 
@@ -146,3 +147,31 @@ def save_jsonl(file_path: str, data: List[Dict]) -> None:
     with open(file_path, "w", encoding="utf-8") as f:
         for item in data:
             f.write(json.dumps(item, ensure_ascii=False) + "\n")
+
+
+def load_docs_from_jsonl(file_path: str) -> List[Document]:
+    """
+    Load documents from a JSONL file.
+
+    Args:
+        file_path (str): The path to the JSONL file.
+
+    Returns:
+        List[Document]: A list of Document objects.
+    """
+    with open(file_path, "r", encoding="utf-8") as file:
+        return [Document(**json.loads(line)) for line in file]
+
+
+def save_docs_to_jsonl(docs: List[Document], file_path: str) -> None:
+    """
+    Save documents to a JSONL file.
+
+    Args:
+        docs (List[Document]): A list of Document objects to be saved.
+        file_path (str): The path to save the JSONL file.
+    """
+    with open(file_path, "w", encoding="utf-8") as file:
+        for doc in docs:
+            json.dump(doc.dict(), file, ensure_ascii=False)
+            file.write("\n")
