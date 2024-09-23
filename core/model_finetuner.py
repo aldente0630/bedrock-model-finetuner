@@ -223,13 +223,13 @@ class BedrockModelFinetuner(Loggable):
         Returns:
             Dict: Job configuration for the fine-tuning job
         """
-        bucket_name = train_dataset_uri.split("//")[1].split("/")[0]
-        output_data_uri = get_s3_uri(
-            bucket_name, f"{self.outputs_prefix}/{custom_model_name}"
-        )
         timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
         self.job_name = job_name or f"model-finetune-job-{timestamp}"
         self.custom_model_name = custom_model_name or f"finetuned-model-{timestamp}"
+        bucket_name = train_dataset_uri.split("//")[1].split("/")[0]
+        output_data_uri = get_s3_uri(
+            bucket_name, f"{self.outputs_prefix}/{self.custom_model_name}"
+        )
         job_config = {
             "customizationType": CUSTOMIZATION_TYPE,
             "jobName": self.job_name,
