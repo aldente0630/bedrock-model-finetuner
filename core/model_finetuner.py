@@ -104,6 +104,7 @@ class BedrockModelFinetuner(Loggable):
         self.job_name = None
         self.custom_model_name = None
         self.base_model_id = base_model_id
+        self.provider = base_model_id.split(".")[0]
         self.hyperparameters = hyperparameters or {}
         self.custom_model_arn = None
         self.provisioned_model_arn = None
