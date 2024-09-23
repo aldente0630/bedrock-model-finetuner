@@ -26,7 +26,7 @@ _ = qa_dataset_generator.save_and_upload(
     train_dataset,
     "../assets/train_dataset.jsonl",
     boto_session=boto_session,
-    bucket_name=<YOUR-S3-BUCKET-NAME>,
+    bucket_name="<YOUR-S3-BUCKET-NAME>",
 )
 ```
 
@@ -45,6 +45,8 @@ qa_dataset_validator.validate_data("../assets/train_dataset.jsonl")
 from bedrock_model_finetuner import BedrockModelFinetuner
 
 bedrock_model_finetuner = BedrockModelFinetuner(aws_region_name="us-west-2")
+
+_ = bedrock_model_finetuner.finetune("s3://<YOUR-S3-BUCKET-NAME>/datasets/train_dataset.jsonl")
 _ = bedrock_model_finetuner.deploy()
 ```
 
@@ -60,7 +62,7 @@ For detailed usage examples, please refer to the notebook files in the `samples`
 
 - [Amazon Bedrock Custom Models Documentation](https://docs.aws.amazon.com/bedrock/latest/userguide/custom-models.html)
 - [Claude Haiku Code Samples](https://github.com/aws-samples/amazon-bedrock-samples/tree/main/bedrock-fine-tuning/claude-haiku)
-- [Fine-Tune Anthropic's Claude 3 Haiku in Amazon Bedrock to Boost Model Accuracy and Quality](https://aws.amazon.com/ko/blogs/machine-learning/fine-tune-anthropics-claude-3-haiku-in-amazon-bedrock-to-boost-model-accuracy-and-quality/)
+- [Fine-tune Anthropic's Claude 3 Haiku in Amazon Bedrock to Boost Model Accuracy and Quality](https://aws.amazon.com/ko/blogs/machine-learning/fine-tune-anthropics-claude-3-haiku-in-amazon-bedrock-to-boost-model-accuracy-and-quality/)
 
 ## License
 
