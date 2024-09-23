@@ -10,7 +10,7 @@ A helper library for fine-tuning Amazon Bedrock models. This toolkit assists in 
 
 ## Usage
 
-### Step 1: Generate Q&A Dataset (Optional)
+### Step 1: Generate Q&A Dataset from Documents (Optional)
 
 ```python
 from bedrock_model_finetuner import ChatModelId, get_llm, QaDatasetGenerator
