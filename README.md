@@ -13,7 +13,7 @@ A helper library for fine-tuning Amazon Bedrock models. This toolkit assists in 
 ### Step 1: Generate Q&A Dataset from Documents (Optional)
 
 ```python
-from bedrock_model_finetuner import ChatModelId, get_llm, QaDatasetGenerator
+from bedrock_model_finetuner import ChatModelId, QaDatasetGenerator, get_llm
 
 llm = get_llm(
     ChatModelId.CLAUDE_V3_5_SONNET,
