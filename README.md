@@ -13,7 +13,10 @@ A helper library for fine-tuning Amazon Bedrock models. This toolkit assists in 
 ### Step 1: Generate Q&A Dataset from Documents (Optional)
 
 ```python
-from bedrock_model_finetuner import ChatModelId, QaDatasetGenerator, get_llm
+import boto3
+from core import ChatModelId, QaDatasetGenerator, get_llm
+
+boto_session = boto3.Session(region_name="us-west-2")
 
 llm = get_llm(
     ChatModelId.CLAUDE_V3_5_SONNET,
@@ -33,7 +36,7 @@ _ = qa_dataset_generator.save_and_upload(
 ### Step 2: Validate Q&A Dataset
 
 ```python
-from bedrock_model_finetuner import QaDatasetValidator
+from core import QaDatasetValidator
 
 qa_dataset_validator = QaDatasetValidator()
 qa_dataset_validator.validate_data("../assets/train_dataset.jsonl")
@@ -42,7 +45,7 @@ qa_dataset_validator.validate_data("../assets/train_dataset.jsonl")
 ### Step 3: Fine-tune and Deploy Model
 
 ```python
-from bedrock_model_finetuner import BedrockModelFinetuner
+from core import BedrockModelFinetuner
 
 bedrock_model_finetuner = BedrockModelFinetuner(aws_region_name="us-west-2")
 
