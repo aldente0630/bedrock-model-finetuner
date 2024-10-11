@@ -29,13 +29,11 @@ import json
 import os
 import random
 from typing import Any, Dict, List, Optional, Tuple
-
 import boto3
 from botocore.exceptions import ClientError
 from langchain.base_language import BaseLanguageModel
 from langchain.schema.output_parser import StrOutputParser
 from langchain_community.callbacks.manager import get_bedrock_anthropic_callback
-
 from .logger import Loggable
 from .prompts import get_qa_generation_prompt
 from .utils import get_s3_uri, load_jsonl, measure_execution_time, save_jsonl

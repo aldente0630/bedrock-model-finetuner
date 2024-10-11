@@ -24,9 +24,7 @@ structure and constraints, improving the quality and consistency of the training
 import json
 import os
 from typing import List, Optional, Tuple
-
-from pydantic import BaseModel, Field, model_validator, ValidationError
-
+from pydantic import BaseModel, Field, ValidationError, model_validator
 from .logger import Loggable
 
 MIN_LINES: int = 32

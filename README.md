@@ -1,6 +1,6 @@
 # Bedrock Model Fine-tuner
 
-A helper library for fine-tuning Amazon Bedrock models. This toolkit assists in generating Q&A datasets from documents and streamlines the LLM fine-tuning process.
+Bedrock Model Fine-tuner is a helper library for fine-tuning Amazon Bedrock models. This toolkit assists in generating Q&A datasets from documents and streamlines the LLM fine-tuning process.
 
 ## Features
 
@@ -64,7 +64,7 @@ For detailed usage examples, please refer to the notebook files in the `samples`
 ## Additional Resources
 
 - [Amazon Bedrock Custom Models Documentation](https://docs.aws.amazon.com/bedrock/latest/userguide/custom-models.html)
-- [Claude Haiku Code Samples](https://github.com/aws-samples/amazon-bedrock-samples/tree/main/bedrock-fine-tuning/claude-haiku)
+- [AWS Samples](https://github.com/aws-samples/amazon-bedrock-samples/tree/main/custom-models/bedrock-fine-tuning/claude-haiku)
 - [Fine-tune Anthropic's Claude 3 Haiku in Amazon Bedrock to Boost Model Accuracy and Quality](https://aws.amazon.com/ko/blogs/machine-learning/fine-tune-anthropics-claude-3-haiku-in-amazon-bedrock-to-boost-model-accuracy-and-quality/)
 
 ## License

@@ -32,10 +32,8 @@ import time
 from datetime import datetime
 from pprint import pformat
 from typing import Dict, Tuple, Optional
-
 import boto3
 from botocore.exceptions import ClientError
-
 from .logger import Loggable
 from .utils import get_s3_uri, measure_execution_time
 
