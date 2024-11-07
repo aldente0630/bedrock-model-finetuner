@@ -32,18 +32,20 @@ import time
 from datetime import datetime
 from pprint import pformat
 from typing import Dict, Tuple, Optional
+
 import boto3
 from botocore.exceptions import ClientError
+
 from .logger import Loggable
 from .utils import get_s3_uri, measure_execution_time
 
-BASE_MODEL_ID: str = "anthropic.claude-3-haiku-20240307-v1:0:200k"
-CUSTOMIZATION_TYPE: str = "FINE_TUNING"
-DEFAULT_IAM_POLICY_ARN: str = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
-BEDROCK_SERVICE: str = "bedrock.amazonaws.com"
-DEFAULT_REGION: str = "us-west-2"
-DEFAULT_ROLE_NAME: str = "model-finetune-role"
-DEFAULT_OUTPUT_PREFIX: str = "outputs"
+BASE_MODEL_ID = "anthropic.claude-3-haiku-20240307-v1:0:200k"
+CUSTOMIZATION_TYPE = "FINE_TUNING"
+DEFAULT_IAM_POLICY_ARN = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+BEDROCK_SERVICE = "bedrock.amazonaws.com"
+DEFAULT_REGION = "us-west-2"
+DEFAULT_ROLE_NAME = "model-finetune-role"
+DEFAULT_OUTPUT_PREFIX = "outputs"
 
 
 class BedrockModelFinetuner(Loggable):
