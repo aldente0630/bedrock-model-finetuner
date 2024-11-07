@@ -16,10 +16,12 @@ import functools
 import json
 import time
 from typing import Callable, Dict, List, Optional
+
 from langchain.base_language import BaseLanguageModel
 from langchain.callbacks.base import BaseCallbackHandler
 from langchain.schema import Document
 from langchain_aws import ChatBedrock
+
 from .constants import ChatModelId
 
 
@@ -29,6 +31,7 @@ def get_llm(
     temperature: float = 0.2,
     profile_name: Optional[str] = None,
     region_name: Optional[str] = None,
+    base_url: Optional[str] = None,
     top_k: int = 50,
     top_p: float = 0.95,
     callbacks: Optional[List[BaseCallbackHandler]] = None,
@@ -43,6 +46,7 @@ def get_llm(
         temperature (float): Sampling temperature. Defaults to 0.2.
         profile_name (Optional[str]): AWS profile name. Defaults to None.
         region_name (Optional[str]): AWS region name. Defaults to None.
+        base_url (Optional[str]): Base URL for the API endpoint. Defaults to None.
         top_k (int): Top-k sampling parameter. Defaults to 50.
         top_p (float): Top-p sampling parameter. Defaults to 0.95.
         callbacks (Optional[List[BaseCallbackHandler]]): List of callback handlers. Defaults to None.
@@ -51,12 +55,16 @@ def get_llm(
     Returns:
         BaseLanguageModel: Configured language model instance.
     """
-    common_params = {
-        "model": chat_model_id.value,
+    model_params = {
         "max_tokens": max_tokens,
         "temperature": temperature,
         "top_p": top_p,
+    }
+
+    common_params = {
+        "model": chat_model_id.value,
         "region_name": region_name,
+        "base_url": base_url,
         "credentials_profile_name": profile_name,
         "callbacks": callbacks,
         **kwargs,
@@ -65,24 +73,17 @@ def get_llm(
     try:
         from langchain_aws import ChatBedrockConverse
 
-        return ChatBedrockConverse(stop=["\n\nHuman:"], **common_params)
+        return ChatBedrockConverse(stop=["\n\nHuman:"], **model_params, **common_params)
     except ImportError:
+        common_params["endpoint_url"] = common_params.pop("base_url")
         return ChatBedrock(
             model_id=chat_model_id.value,
             model_kwargs={
                 "stop_sequences": ["\n\nHuman:"],
                 "top_k": top_k,
-                **{
-                    k: v
-                    for k, v in common_params.items()
-                    if k in ["max_tokens", "temperature", "top_p"]
-                },
+                **model_params,
             },
-            **{
-                k: v
-                for k, v in common_params.items()
-                if k not in ["max_tokens", "temperature", "top_p"]
-            },
+            **common_params,
         )
 
 
