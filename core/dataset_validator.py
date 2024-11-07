@@ -24,18 +24,20 @@ structure and constraints, improving the quality and consistency of the training
 import json
 import os
 from typing import List, Optional, Tuple
-from pydantic import BaseModel, Field, ValidationError, model_validator
+
+from pydantic import BaseModel, Field, model_validator, ValidationError
+
 from .logger import Loggable
 
-MIN_LINES: int = 32
-MAX_TRAIN_LINES: int = 10000
-MAX_VALIDATION_LINES: int = 1000
-MAX_TOTAL_LINES: int = 10000
-MAX_TOKENS: int = 32000
-CHARS_PER_TOKEN: int = 3
-MAX_TRAIN_SIZE_GB: int = 10
-MAX_VALIDATION_SIZE_GB: int = 1
-RESERVED_KEYWORDS: List[str] = ["\nHuman:", "\nAssistant:"]
+MIN_LINES = 32
+MAX_TRAIN_LINES = 10000
+MAX_VALIDATION_LINES = 1000
+MAX_TOTAL_LINES = 10000
+MAX_TOKENS = 32000
+CHARS_PER_TOKEN = 3
+MAX_TRAIN_SIZE_GB = 10
+MAX_VALIDATION_SIZE_GB = 1
+RESERVED_KEYWORDS = ["\nHuman:", "\nAssistant:"]
 
 
 class Message(BaseModel):
