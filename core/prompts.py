@@ -18,8 +18,8 @@ from langchain.prompts import (
     SystemMessagePromptTemplate,
 )
 
-OUTPUT_START_TOKEN: str = "<output>"
-OUTPUT_END_TOKEN: str = "</output>"
+OUTPUT_START_TOKEN = "<output>"
+OUTPUT_END_TOKEN = "</output>"
 
 
 def get_qa_generation_prompt(
