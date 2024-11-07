@@ -28,20 +28,22 @@ Dependencies:
 import json
 import os
 import random
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
+
 import boto3
 from botocore.exceptions import ClientError
 from langchain.base_language import BaseLanguageModel
 from langchain.schema.output_parser import StrOutputParser
 from langchain_community.callbacks.manager import get_bedrock_anthropic_callback
+
 from .logger import Loggable
 from .prompts import get_qa_generation_prompt
 from .utils import get_s3_uri, load_jsonl, measure_execution_time, save_jsonl
 
-MAX_TRAINING_LINES: int = 10000
-MAX_VALIDATION_LINES: int = 1000
-DEFAULT_DATASETS_PREFIX: str = "datasets"
-DEFAULT_SYSTEM_PROMPT: str = """
+MAX_TRAINING_LINES = 10000
+MAX_VALIDATION_LINES = 1000
+DEFAULT_DATASETS_PREFIX = "datasets"
+DEFAULT_SYSTEM_PROMPT = """
 Below is an instruction that describes a task, paired with an input that provides further context. 
 Write a response that appropriately completes the request.
 """
@@ -286,23 +288,31 @@ class QaDatasetGenerator(BaseQaDatasetGenerator, Loggable):
         self.logger.info("Generated %d results", len(results))
         return results
 
-    def _sample_data(self, sampling_rate: float) -> Tuple[List[str], List[str]]:
+    def _sample_data(
+        self, num_samples: Optional[Union[float, int]]
+    ) -> Tuple[List[str], List[str]]:
         """
-        Sample data based on the given sampling rate.
+        Sample data from contexts and metadata.
 
         Args:
-            sampling_rate (float): The rate at which to sample data.
+            num_samples (Union[float, int]): Number of samples to take. If float < 1.0, treated as fraction.
 
         Returns:
             Tuple[List[str], List[str]]: Sampled contexts and metadata.
         """
-        if sampling_rate < 1.0:
-            num_samples = int(len(self.contexts) * sampling_rate)
-            sampled_indices = random.sample(range(len(self.contexts)), num_samples)
-            return [self.contexts[i] for i in sampled_indices], [
-                self.metadata[i] for i in sampled_indices
-            ]
-        return self.contexts, self.metadata
+        if num_samples is None:
+            return self.contexts, self.metadata
+
+        if isinstance(num_samples, float) and num_samples < 1.0:
+            num_samples = int(len(self.contexts) * num_samples)
+        else:
+            num_samples = min(int(num_samples), len(self.contexts))
+
+        sampled_indices = random.sample(range(len(self.contexts)), num_samples)
+        return (
+            [self.contexts[i] for i in sampled_indices],
+            [self.metadata[i] for i in sampled_indices],
+        )
 
     def _sample_final_results(
         self,
@@ -324,19 +334,20 @@ class QaDatasetGenerator(BaseQaDatasetGenerator, Loggable):
         max_lines = (
             MAX_TRAINING_LINES if dataset_type == "train" else MAX_VALIDATION_LINES
         )
-        if sample_final_results and len(formatted_results) > max_lines:
-            self.logger.warning(
-                "Dataset size exceeds %d lines. Randomly sampling %d lines.",
-                max_lines,
-                max_lines,
-            )
-            return random.sample(formatted_results, max_lines)
-        return formatted_results
+        if not sample_final_results or len(formatted_results) <= max_lines:
+            return formatted_results
+
+        self.logger.warning(
+            "Dataset size exceeds %d lines. Randomly sampling %d lines.",
+            max_lines,
+            max_lines,
+        )
+        return random.sample(formatted_results, max_lines)
 
     @measure_execution_time
     def generate(
         self,
-        sampling_rate: float = 1.0,
+        num_samples: Optional[Union[float, int]] = None,
         max_workers: int = 4,
         dataset_type: str = "train",
         sample_final_results: bool = True,
@@ -345,7 +356,8 @@ class QaDatasetGenerator(BaseQaDatasetGenerator, Loggable):
         Generate Q&A dataset.
 
         Args:
-            sampling_rate (float): Rate at which to sample input data.
+            num_samples (Union[float, int]): Number or fraction of samples to use.
+                If float < 1.0, treated as fraction of total samples.
             max_workers (int): Maximum number of concurrent workers.
             dataset_type (str): Type of dataset ('train' or 'validation').
             sample_final_results (bool): Whether to sample final results.
@@ -353,7 +365,7 @@ class QaDatasetGenerator(BaseQaDatasetGenerator, Loggable):
         Returns:
             List[Dict[str, Any]]: Generated Q&A dataset.
         """
-        contexts, metadata = self._sample_data(sampling_rate)
+        contexts, metadata = self._sample_data(num_samples)
         self.logger.info("Using %d samples for dataset generation", len(contexts))
 
         results = self._generate_qa_pairs(contexts, metadata, max_workers)
